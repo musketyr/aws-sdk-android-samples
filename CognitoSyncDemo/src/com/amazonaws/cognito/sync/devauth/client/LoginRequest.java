@@ -15,6 +15,7 @@
 
 package com.amazonaws.cognito.sync.devauth.client;
 
+import com.amazonaws.cognito.sync.CognitoConfiguration;
 import com.amazonaws.util.HttpUtils;
 
 import java.net.URL;
@@ -29,14 +30,12 @@ public class LoginRequest extends Request {
     private final String uid;
     private final String username;
     private final String password;
-    private final String appName;
 
     private final String decryptionKey;
 
-    public LoginRequest(final URL endpoint, final String appName,
-            final String uid, final String username, final String password) {
+    public LoginRequest(final URL endpoint,
+                        final String uid, final String username, final String password) {
         this.endpoint = endpoint;
-        this.appName = appName;
         this.uid = uid;
         this.username = username;
         this.password = password;
@@ -79,7 +78,7 @@ public class LoginRequest extends Request {
      */
     protected String computeDecryptionKey() {
         try {
-            String salt = this.username + this.appName + this.endpoint.getHost();
+            String salt = CognitoConfiguration.SALT;
             return Utilities.getSignature(salt, this.password);
         } catch (Exception exception) {
             return null;

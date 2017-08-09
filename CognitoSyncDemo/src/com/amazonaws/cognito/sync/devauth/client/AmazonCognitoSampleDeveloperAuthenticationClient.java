@@ -37,21 +37,13 @@ public class AmazonCognitoSampleDeveloperAuthenticationClient {
     private final URL endpoint;
 
     /**
-     * The appName declared by the sample Cognito developer authentication
-     * application.
-     */
-    private final String appName;
-
-    /**
      * The shared preferences where user key is stored.
      */
     private final SharedPreferences sharedPreferences;
 
     public AmazonCognitoSampleDeveloperAuthenticationClient(
-            SharedPreferences sharedPreferences, URL endpoint,
-            String appName) {
+            SharedPreferences sharedPreferences, URL endpoint) {
         this.endpoint = endpoint;
-        this.appName = appName.toLowerCase();
         this.sharedPreferences = sharedPreferences;
     }
 
@@ -89,7 +81,7 @@ public class AmazonCognitoSampleDeveloperAuthenticationClient {
             String uid = AmazonCognitoSampleDeveloperAuthenticationClient
                     .generateRandomString();
             LoginRequest loginRequest = new LoginRequest(this.endpoint,
-                    this.appName, uid, username, password);
+                    uid, username, password);
             ResponseHandler handler = new LoginResponseHandler(
                     loginRequest.getDecryptionKey());
 

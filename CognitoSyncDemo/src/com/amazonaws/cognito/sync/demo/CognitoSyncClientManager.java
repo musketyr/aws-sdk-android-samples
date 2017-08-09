@@ -21,6 +21,7 @@ import android.util.Log;
 import com.amazonaws.auth.AWSAbstractCognitoIdentityProvider;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.auth.CognitoCredentialsProvider;
+import com.amazonaws.cognito.sync.CognitoConfiguration;
 import com.amazonaws.mobileconnectors.cognito.CognitoSyncManager;
 import com.amazonaws.regions.Regions;
 
@@ -31,23 +32,9 @@ public class CognitoSyncClientManager {
 
     private static final String TAG = "CognitoSyncClientManager";
 
-    /**
-     * Enter here the Identity Pool associated with your app and the AWS
-     * region where it belongs. Get this information from the AWS console.
-     */
-
-    private static final String IDENTITY_POOL_ID = "IDENTITY_POOL_ID";
-    private static final Regions REGION = Regions.US_EAST_1;
-
     private static CognitoSyncManager syncClient;
     protected static CognitoCachingCredentialsProvider credentialsProvider = null;
     protected static AWSAbstractCognitoIdentityProvider developerIdentityProvider;
-
-    /**
-     * Set this flag to true for using developer authenticated identities
-     * Make sure you configured it in DeveloperAuthenticationProvider.java.
-     */
-    private static boolean useDeveloperAuthenticatedIdentities = false;
 
 
     /**
@@ -59,19 +46,19 @@ public class CognitoSyncClientManager {
 
         if (syncClient != null) return;
 
-        if (useDeveloperAuthenticatedIdentities) {
+        if (CognitoConfiguration.USE_DEVELOPER_AUTHENTICATED_IDENTITIES) {
             developerIdentityProvider = new DeveloperAuthenticationProvider(
-                    null, IDENTITY_POOL_ID, context, Regions.US_EAST_1);
+                    null, CognitoConfiguration.IDENTITY_POOL_ID, context, Regions.US_EAST_1);
             credentialsProvider = new CognitoCachingCredentialsProvider(context, developerIdentityProvider,
-                    REGION);
+                    CognitoConfiguration.REGION);
             Log.i(TAG, "Using developer authenticated identities");
         } else {
-            credentialsProvider = new CognitoCachingCredentialsProvider(context, IDENTITY_POOL_ID,
-                    REGION);
+            credentialsProvider = new CognitoCachingCredentialsProvider(context, CognitoConfiguration.IDENTITY_POOL_ID,
+                    CognitoConfiguration.REGION);
             Log.i(TAG, "Developer authenticated identities is not configured");
         }
 
-        syncClient = new CognitoSyncManager(context, REGION, credentialsProvider);
+        syncClient = new CognitoSyncManager(context, CognitoConfiguration.REGION, credentialsProvider);
     }
 
     /**

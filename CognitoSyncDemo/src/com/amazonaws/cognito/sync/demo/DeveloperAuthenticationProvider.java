@@ -20,6 +20,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.amazonaws.auth.AWSAbstractCognitoDeveloperIdentityProvider;
+import com.amazonaws.cognito.sync.CognitoConfiguration;
 import com.amazonaws.cognito.sync.devauth.client.AmazonCognitoSampleDeveloperAuthenticationClient;
 import com.amazonaws.cognito.sync.devauth.client.GetTokenResponse;
 import com.amazonaws.regions.Regions;
@@ -37,25 +38,21 @@ public class DeveloperAuthenticationProvider extends
 
     private static AmazonCognitoSampleDeveloperAuthenticationClient devAuthClient;
 
-    private static final String developerProvider = "";
-    private static final String cognitoSampleDeveloperAuthenticationAppEndpoint = "";
-    private static final String cognitoSampleDeveloperAuthenticationAppName = "AWSCognitoDeveloperAuthenticationSample";
-
     public DeveloperAuthenticationProvider(String accountId,
             String identityPoolId, Context context, Regions region) {
         super(accountId, identityPoolId, region);
 
-        if (developerProvider == null || developerProvider.isEmpty()) {
-            Log.e("DeveloperAuthentication", "Error: developerProvider name not set!");
+        if (CognitoConfiguration.DEVELOPER_PROVIDER == null || CognitoConfiguration.DEVELOPER_PROVIDER.isEmpty()) {
+            Log.e("DeveloperAuthentication", "Error: DEVELOPER_PROVIDER name not set!");
             throw new RuntimeException("DeveloperAuthenticatedApp not configured.");
         }
 
         URL endpoint;
         try {
-            if (cognitoSampleDeveloperAuthenticationAppEndpoint.contains("://")) {
-                endpoint = new URL(cognitoSampleDeveloperAuthenticationAppEndpoint);
+            if (CognitoConfiguration.COGNITO_SAMPLE_DEVELOPER_AUTHENTICATION_APP_ENDPOINT.contains("://")) {
+                endpoint = new URL(CognitoConfiguration.COGNITO_SAMPLE_DEVELOPER_AUTHENTICATION_APP_ENDPOINT);
             } else {
-                endpoint = new URL("http://"+cognitoSampleDeveloperAuthenticationAppEndpoint);
+                endpoint = new URL("http://"+ CognitoConfiguration.COGNITO_SAMPLE_DEVELOPER_AUTHENTICATION_APP_ENDPOINT);
             }
         } catch (MalformedURLException e) {
             Log.e("DeveloperAuthentication", "Developer Authentication Endpoint is not a valid URL!", e);
@@ -70,7 +67,7 @@ public class DeveloperAuthenticationProvider extends
          */
         devAuthClient = new AmazonCognitoSampleDeveloperAuthenticationClient(
                 PreferenceManager.getDefaultSharedPreferences(context),
-                endpoint, cognitoSampleDeveloperAuthenticationAppName);
+                endpoint);
 
     }
 
@@ -152,7 +149,7 @@ public class DeveloperAuthenticationProvider extends
      */
     @Override
     public String getProviderName() {
-        return developerProvider;
+        return CognitoConfiguration.DEVELOPER_PROVIDER;
     }
 
     /**
